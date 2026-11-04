@@ -5,10 +5,12 @@
 
 - name: nodejs setup
   include_role:
+    name: common
     tasks_from: nodejs
 
 - name: systemd setup
   include_role:
+    name: common
     task_from: systemd-setup
 
 - name: copy mongo repo
