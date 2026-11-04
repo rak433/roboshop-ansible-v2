@@ -18,13 +18,13 @@
   register: cities_count
   ignore_errors: true
   tags:
-    - mysql
+  - mysql
 
 - name: print cities count
   debug:
     msg: "{{ cities_count }}"
   tags:
-    - mysql
+  - mysql
 
 - name: load cities data in to mysql
   shell: mysql -h {{ mysql_host }} -uroot -p{{ mysql_root_password }} < /app/db/master-data.sql
