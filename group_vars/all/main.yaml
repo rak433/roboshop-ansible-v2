@@ -13,7 +13,7 @@ redis_host: redis.testdevops.sbs
 catalogue_host: catalogue.testdevops.sbs
 shipping_host: shipping.testdevops.sbs
 payment_host: payment.testdevops.sbs
-mysql_host: mysql.testdevops.sbs
+mysql_host: mysql.testdevops.sb
 rabbitmq_host: rabbitmq.testdevops.sbs
 user_host: user.testdevops.sbs
 cart_host: cart.testdevops.sbs
