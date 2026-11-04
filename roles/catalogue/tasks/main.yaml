@@ -3,55 +3,37 @@
     name: common
     tasks_from: app-setup
 
+- name: nodejs setup
+  include_role:
+    tasks_from: nodejs
 
-#  - name: disable nodejs
-#    command: dnf module disable nodejs -y
+- name: systemd setup
+  include_role:
+    task_from: systemd-setup
 
-#  - name: enable nodejs24
-#    command: dnf module enable nodejs:24 -y
+- name: copy mongo repo
+  copy:
+    src: mongo.repo
+    dest: /etc/yum.repos.d/mongo.repo
 
-#  - name: install nodejs
-#    dnf:
-#     name: nodejs
-#     state: present
+- name: install mongodb client
+  dnf:
+    name: mongodb-mongosh
+    state: present
 
-#  - name: install dependencies
-#    community.general.npm:
-#     path: /app
+- name: check products loded or not
+  command: mongosh --host {{ mongodb_host }} --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()'
+  register: product_count
 
-#  - name: copy catalogue service
-#    template:
-#     src: catalogue.service.j2
-#     dest: /etc/systemd/system/catalogue.service
+- name: print product count
+  debug:
+    msg: "{{ product_count }}"
 
-#  - name: copy mongo repo
-#    copy:
-#     src: mongo.repo
-#     dest: /etc/yum.repos.d/mongo.repo
+- name: load the products
+  shell: mongosh --host {{ mongodb_host }} </app/db/master-data.js
+  when: product_count.stdout | int == 0
 
-#  - name: install mongodb client
-#    dnf:
-#     name: mongodb-mongosh
-#     state: present
-
-#  - name: check products loded or not
-#    command: mongosh --host {{ mongodb_host }} --quiet --eval 'db.getSiblingDB("catalogue").products.countDocuments()'
-#    register: product_count
-
-#  - name: print product count
-#    debug:
-#     msg: "{{ product_count }}"
-
-#  - name: load the products
-#    shell: mongosh --host {{ mongodb_host }} </app/db/master-data.js
-#    when: product_count.stdout | int == 0
-
-#  - name: daemon reload
-#    systemd_service:
-#     daemon_reload: true
-
-#   - name: start and enable catalogue
-#     service:
-#       name: catalogue
-#       state: restarted
-#       enabled: yes
+- name: restart application
+  include_role:
+    name: common
+    tasks_from: restart
